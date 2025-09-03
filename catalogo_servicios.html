@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="es">
+<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Catálogo - Intune (Tablero)</title>
+<style>
+:root{--bg:#f6fbff;--card:#ffffff;--accent:#0b63d6;--muted:#567aa3;--border:#e6eefc}
+body{font-family:Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);margin:0;color:#07345a}
+.wrap{max-width:1100px;margin:24px auto;padding:16px}
+.header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.title{font-size:26px;font-weight:700}
+.subtitle{color:var(--muted)}
+.controls{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.input,select,button{padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:#fff}
+.btn{background:var(--accent);color:#fff;border:none;cursor:pointer;padding:8px 12px;border-radius:8px}
+.btn-secondary{background-color:#eef6ff;color:var(--accent);border:1px solid var(--border);cursor:pointer;}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;margin-top:18px}
+.card{background:var(--card);border:1px solid var(--border);padding:14px;border-radius:10px;box-shadow:0 1px 0 rgba(11,99,214,0.06)}
+.kv{display:grid;grid-template-columns:110px 1fr;gap:6px;margin-top:10px;align-items:flex-start}
+.badge{display:inline-block;padding:6px 8px;border-radius:999px;background:#eef6ff;color:var(--accent);font-weight:600;font-size:12px}
+.small{color:var(--muted);font-size:13px}
+.intro-box{background:var(--card);border:1px solid var(--border);padding:18px;border-radius:10px;margin-top:18px;box-shadow:0 1px 0 rgba(11,99,214,0.06)}
+footer{text-align:center;color:#6b85a8;margin:26px 0}
+dialog{border-radius:10px;border:1px solid var(--border);padding:0}
+.modal-hd{padding:12px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.modal-bd{padding:12px}
+.icon{width:44px;height:44px;border-radius:8px;background:linear-gradient(135deg,#e6f0ff,#fff);display:inline-flex;align-items:center;justify-content:center;color:var(--accent);font-weight:700;margin-right:8px}
+@media(print){.controls,.intro-box{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div>
+      <div class="title">Catálogo de Servicios – Microsoft Intune (Tablero)</div>
+      <div class="subtitle">Vista ejecutiva y técnica. Filtra por proceso ITIL, nivel de riesgo o búsqueda.</div>
+    </div>
+    <div style="text-align:right">
+      <img src="logo_tech.svg" alt="overview" style="width:220px;border-radius:8px;box-shadow:0 4px 20px rgba(11,99,214,0.06)">
+    </div>
+  </div>
+
+  <div class="intro-box">
+    <h3 style="margin-top:0">¿Qué es Microsoft Intune?</h3>
+    <p class="small" style="color:#274a7a;line-height:1.6;">
+      <b>Para el equipo comercial:</b> Piensen en Intune como un centro de control unificado para todos los dispositivos de una empresa (laptops, móviles, tablets). Permite que la empresa proteja su información, se asegure de que los dispositivos son seguros y facilite a los empleados el acceso a las aplicaciones que necesitan para trabajar, todo desde la nube y de forma automatizada. Es una pieza clave para la modernización del puesto de trabajo y la seguridad.
+    </p>
+    <p class="small" style="color:#274a7a;line-height:1.6;">
+      <b>Para el equipo técnico:</b> Intune es una plataforma de gestión de puntos de conexión (UEM/MDM/MAM) basada en la nube. Permite administrar el ciclo de vida de los dispositivos Windows, macOS, Android e iOS. Se integra nativamente con Entra ID para control de acceso condicional y permite desplegar políticas de configuración, cumplimiento, aplicaciones y actualizaciones de seguridad de forma centralizada, simplificando la gestión y mejorando la postura de seguridad del endpoint.
+    </p>
+  </div>
+  <div class="controls">
+    <input id="q" class="input" placeholder="Buscar servicio..."/>
+    <select id="proc" class="input">
+      <option value="">Todos los procesos ITIL</option>
+    </select>
+    <select id="risk" class="input">
+      <option value="">Todos los niveles de riesgo</option>
+      <option>Bajo</option><option>Medio</option><option>Alto</option>
+    </select>
+    <select id="auto" class="input">
+      <option value="">Automatizable</option><option>SI</option><option>Parcial</option><option>No</option>
+    </select>
+    <button class="btn-secondary" onclick="window.location.href='calculadora.html'">Calculadora de Esfuerzo</button>
+    <button class="btn" id="print">Exportar PDF</button>
+  </div>
+
+  <div id="grid" class="grid"></div>
+
+  <footer>Telefonica Tech Colombia</footer>
+</div>
+
+<dialog id="modal"><div class="modal-hd"><strong id="mtitle"></strong><button onclick="modal.close()">✕</button></div><div class="modal-bd" id="mbody"></div></dialog>
+
+<script>
+const services = [{"Servicio": "Reset de Password", "Proceso_ITIL_Principal": "Gestion de Acceso", "Tipo_Solicitud": "Solicitud de Servicio", "Nivel_Riesgo": "Bajo", "Automatizable": "SI", "Dependencias_Principales": "Entra ID, AD Connect", "Frecuencia_Uso_Estimada": "Alta (diaria)", "Descripcion": "Permite a los usuarios restablecer su contraseña de manera segura y rápida en caso de olvido, sin necesidad de contactar al soporte técnico. Automatiza la recuperación de acceso a las cuentas corporativas.", "Valor_Negocio": "Aumenta la productividad al reducir los tiempos de espera del usuario y la carga del equipo de soporte.", "Usuarios_Objetivo": "Todos los empleados", "Soporte": "Contactar al Service Desk, vía teléfono o portal de autoservicio.", "SLA_Estimado": "5 minutos (automatizado)", "Alcance_Incluye": ["Restablecimiento de contraseña de Entra ID", "Soporte para problemas de conexión con AD Connect"], "Alcance_No_Incluye": ["Restablecimiento de contraseñas de aplicaciones de terceros"]}, {"Servicio": "Wall Paper", "Proceso_ITIL_Principal": "Gestion de Configuración", "Tipo_Solicitud": "Solicitud de Servicio", "Nivel_Riesgo": "Bajo", "Automatizable": "SI", "Dependencias_Principales": "Intune, Dispositivo registrado", "Frecuencia_Uso_Estimada": "Media (semanal)", "Descripcion": "Define y despliega fondos de pantalla corporativos en los dispositivos de los empleados. Asegura que la identidad de la marca sea consistente en todos los equipos de la organización.", "Valor_Negocio": "Mantiene una imagen corporativa consistente en todos los dispositivos.", "Usuarios_Objetivo": "Todos los empleados con dispositivos gestionados por Intune", "Soporte": "Contactar al Service Desk, vía teléfono o portal de autoservicio.", "SLA_Estimado": "1-2 horas", "Alcance_Incluye": ["Despliegue de imagen corporativa de fondo de pantalla", "Actualizaciones periódicas de las imágenes"], "Alcance_No_Incluye": ["Fondos de pantalla personalizados por usuario"]}, {"Servicio": "Windows Autopilot", "Proceso_ITIL_Principal": "Gestion de Activos", "Tipo_Solicitud": "Solicitud de Cambio", "Nivel_Riesgo": "Medio", "Automatizable": "Parcial", "Dependencias_Principales": "Intune, Dispositivo compatible", "Frecuencia_Uso_Estimada": "Baja (por demanda)", "Descripcion": "Simplifica la configuración de nuevos dispositivos Windows. Permite a los usuarios finales configurar un equipo nuevo sin necesidad de intervención manual del equipo de TI. El dispositivo se une a la red corporativa y se configura automáticamente.", "Valor_Negocio": "Permite una implementación y configuración de dispositivos más rápida y eficiente, reduciendo el tiempo de inactividad de los empleados.", "Usuarios_Objetivo": "Usuarios de nuevo ingreso o que reciben un nuevo dispositivo", "Soporte": "Contactar al Service Desk, vía teléfono o portal de autoservicio.", "SLA_Estimado": "Tiempo de configuración inicial: 30-45 minutos. Soporte adicional: 8 horas hábiles.", "Alcance_Incluye": ["Configuración automatizada de dispositivos nuevos", "Unión a Entra ID"], "Alcance_No_Incluye": ["Migración de datos de un dispositivo anterior"]}, {"Servicio": "Windows Update", "Proceso_ITIL_Principal": "Gestion de Cambios", "Tipo_Solicitud": "Cambio Estándar", "Nivel_Riesgo": "Medio", "Automatizable": "SI", "Dependencias_Principales": "Intune, WSUS/WUfB", "Frecuencia_Uso_Estimada": "Media (mensual)", "Descripcion": "Administra las actualizaciones de seguridad y calidad de los sistemas operativos Windows de forma centralizada. Asegura que todos los equipos cumplan con las políticas de seguridad de la organización.", "Valor_Negocio": "Mejora la seguridad de la organización al mantener los sistemas al día, reduciendo la exposición a vulnerabilidades.", "Usuarios_Objetivo": "Todos los empleados con dispositivos Windows", "Soporte": "Contactar al Service Desk para problemas específicos con actualizaciones.", "SLA_Estimado": "Programado mensualmente. Soporte: 4-8 horas hábiles para problemas no programados.", "Alcance_Incluye": ["Despliegue automático de actualizaciones de seguridad y parches", "Reporte de cumplimiento de actualizaciones"], "Alcance_No_Incluye": ["Actualizaciones de aplicaciones no-Microsoft"]}, {"Servicio": "MDM Android", "Proceso_ITIL_Principal": "Gestion de Configuración", "Tipo_Solicitud": "Solicitud de Servicio", "Nivel_Riesgo": "Medio", "Automatizable": "Parcial", "Dependencias_Principales": "Intune, Dispositivo Android", "Frecuencia_Uso_Estimada": "Media (semanal)", "Descripcion": "Permite la gestión de dispositivos móviles Android corporativos, aplicando políticas de seguridad, configurando accesos a correo y aplicaciones corporativas, y gestionando inventario de hardware.", "Valor_Negocio": "Protege los datos corporativos en dispositivos móviles y asegura el cumplimiento de las políticas de seguridad.", "Usuarios_Objetivo": "Empleados que usan dispositivos Android para fines laborales", "Soporte": "Contactar al Service Desk para problemas de configuración.", "SLA_Estimado": "4-8 horas hábiles", "Alcance_Incluye": ["Configuración de políticas de seguridad", "Acceso a correo y aplicaciones corporativas"], "Alcance_No_Incluye": ["Instalación de aplicaciones de terceros no aprobadas"]}, {"Servicio": "MDM iPhone", "Proceso_ITIL_Principal": "Gestion de Configuración", "Tipo_Solicitud": "Solicitud de Servicio", "Nivel_Riesgo": "Medio", "Automatizable": "Parcial", "Dependencias_Principales": "Intune, Dispositivo iOS", "Frecuencia_Uso_Estimada": "Media (semanal)", "Descripcion": "Permite la gestión de dispositivos móviles iOS (iPhone/iPad) corporativos, aplicando políticas de seguridad, configurando accesos a correo y aplicaciones corporativas, y gestionando inventario de hardware.", "Valor_Negocio": "Protege los datos corporativos en dispositivos móviles y asegura el cumplimiento de las políticas de seguridad.", "Usuarios_Objetivo": "Empleados que usan dispositivos iOS para fines laborales", "Soporte": "Contactar al Service Desk para problemas de configuración.", "SLA_Estimado": "4-8 horas hábiles", "Alcance_Incluye": ["Configuración de políticas de seguridad", "Acceso a correo y aplicaciones corporativas"], "Alcance_No_Incluye": ["Instalación de aplicaciones de terceros no aprobadas"]}, {"Servicio": "Politicas de Cumplimiento", "Proceso_ITIL_Principal": "Gestion de Seguridad", "Tipo_Solicitud": "Solicitud de Cambio", "Nivel_Riesgo": "Alto", "Automatizable": "Parcial", "Dependencias_Principales": "Intune, Politicas corporativas", "Frecuencia_Uso_Estimada": "Baja (por demanda)", "Descripcion": "Permite la creación, modificación y despliegue de políticas de seguridad y cumplimiento en los dispositivos. Asegura que los dispositivos cumplen con los estándares de seguridad de la organización (ej. tener antivirus, disco encriptado, etc.).", "Valor_Negocio": "Fortalece la postura de seguridad de la organización, minimizando riesgos de fuga de datos o ataques cibernéticos.", "Usuarios_Objetivo": "Personal de TI, CISO", "Soporte": "Consultas a través de un ticket de cambio.", "SLA_Estimado": "Varía según la complejidad del cambio.", "Alcance_Incluye": ["Definición y despliegue de políticas de seguridad", "Reportes de cumplimiento"], "Alcance_No_Incluye": ["Garantizar el cumplimiento en dispositivos no gestionados"]}, {"Servicio": "Block URL", "Proceso_ITIL_Principal": "Gestion de Seguridad", "Tipo_Solicitud": "Solicitud de Cambio", "Nivel_Riesgo": "Alto", "Automatizable": "SI", "Dependencias_Principales": "Intune, Proxy/Firewall", "Frecuencia_Uso_Estimada": "Baja (por demanda)", "Descripcion": "Permite bloquear o restringir el acceso a sitios web no deseados en los dispositivos corporativos. Previene el acceso a contenido malicioso o no productivo.", "Valor_Negocio": "Mejora la seguridad al prevenir el acceso a sitios maliciosos y aumenta la productividad de los empleados.", "Usuarios_Objetivo": "Personal de TI", "Soporte": "Contactar al Service Desk para solicitud de desbloqueo, vía ticket.", "SLA_Estimado": "4-8 horas hábiles para bloqueo. 24-48 horas hábiles para desbloqueo (sujeto a aprobación).", "Alcance_Incluye": ["Bloqueo de URLs o categorías de sitios", "Reportes de acceso"], "Alcance_No_Incluye": ["Bloqueo de aplicaciones específicas"]}, {"Servicio": "Inicio de Página", "Proceso_ITIL_Principal": "Gestion de Configuración", "Tipo_Solicitud": "Solicitud de Servicio", "Nivel_Riesgo": "Bajo", "Automatizable": "SI", "Dependencias_Principales": "Intune, Navegador", "Frecuencia_Uso_Estimada": "Baja (por demanda)", "Descripcion": "Configura la página de inicio predeterminada en los navegadores web de los dispositivos corporativos. Asegura que los usuarios tengan acceso rápido a los recursos internos más importantes.", "Valor_Negocio": "Mejora la eficiencia y la productividad al dirigir a los empleados a los recursos clave desde el inicio.", "Usuarios_Objetivo": "Todos los empleados", "Soporte": "Contactar al Service Desk, vía ticket.", "SLA_Estimado": "4 horas hábiles", "Alcance_Incluye": ["Configuración de la página de inicio en navegadores web soportados"], "Alcance_No_Incluye": ["Configuración de favoritos o marcadores personalizados"]}, {"Servicio": "BitLocker", "Proceso_ITIL_Principal": "Gestion de Seguridad", "Tipo_Solicitud": "Solicitud de Cambio", "Nivel_Riesgo": "Alto", "Automatizable": "Parcial", "Dependencias_Principales": "Intune, TPM, Dispositivo Pro/Enterprise", "Frecuencia_Uso_Estimada": "Baja (por demanda)", "Descripcion": "Permite la activación de la encriptación de disco BitLocker en los dispositivos Windows. Protege la información almacenada en el disco duro en caso de robo o pérdida del equipo.", "Valor_Negocio": "Protege los datos corporativos y cumple con los requisitos de seguridad de la información.", "Usuarios_Objetivo": "Todos los empleados con dispositivos Windows compatibles", "Soporte": "Contactar al Service Desk para recuperación de clave.", "SLA_Estimado": "Activación: programada. Soporte: 1-2 horas para recuperación de clave.", "Alcance_Incluye": ["Activación de encriptación de disco", "Recuperación de clave"], "Alcance_No_Incluye": ["Encriptación de discos externos"]}, {"Servicio": "Implementación Intune", "Proceso_ITIL_Principal": "Gestion de Servicios", "Tipo_Solicitud": "Solicitud de Cambio Mayor", "Nivel_Riesgo": "Alto", "Automatizable": "No", "Dependencias_Principales": "Licencias, Infraestructura", "Frecuencia_Uso_Estimada": "Muy baja (proyecto)", "Descripcion": "Servicio de consultoría y despliegue para la implementación inicial de la plataforma Microsoft Intune en la organización. Incluye la planificación, configuración inicial y despliegue de las funcionalidades básicas de la herramienta.", "Valor_Negocio": "Establece una base sólida para la gestión de dispositivos y aplicaciones en la nube, permitiendo a la organización modernizar su entorno de TI.", "Usuarios_Objetivo": "Departamento de TI", "Soporte": "Gestionado como un proyecto. Soporte posterior por el equipo de TI.", "SLA_Estimado": "Se rige por el plan de proyecto.", "Alcance_Incluye": ["Diseño de arquitectura", "Configuración inicial de Intune", "Despliegue piloto"], "Alcance_No_Incluye": ["Migración de todas las aplicaciones legacy", "Soporte de segundo nivel continuo"]}, {"Servicio": "Integración Entra ID", "Proceso_ITIL_Principal": "Gestion de Servicios", "Tipo_Solicitud": "Solicitud de Cambio Mayor", "Nivel_Riesgo": "Alto", "Automatizable": "No", "Dependencias_Principales": "Tenant Entra ID, Conectividad", "Frecuencia_Uso_Estimada": "Muy baja (proyecto)", "Descripcion": "Configuración y sincronización del servicio de directorio local (Active Directory) con Microsoft Entra ID. Es un proyecto de infraestructura que permite la autenticación y la gestión de identidades en la nube.", "Valor_Negocio": "Permite a los usuarios acceder a recursos y aplicaciones en la nube con una sola identidad, simplificando la gestión de accesos y mejorando la seguridad.", "Usuarios_Objetivo": "Departamento de TI", "Soporte": "Gestionado como un proyecto.", "SLA_Estimado": "Se rige por el plan de proyecto.", "Alcance_Incluye": ["Sincronización de identidades", "Configuración de SSO para aplicaciones", "Políticas de acceso condicional"], "Alcance_No_Incluye": ["Migración de buzones de Exchange"]}, {"Servicio": "Integración Active Directory", "Proceso_ITIL_Principal": "Gestion de Servicios", "Tipo_Solicitud": "Solicitud de Cambio Mayor", "Nivel_Riesgo": "Alto", "Automatizable": "No", "Dependencias_Principales": "Active Directory, AD Connect", "Frecuencia_Uso_Estimada": "Muy baja (proyecto)", "Descripcion": "Proyecto para la configuración de la herramienta AD Connect que sincroniza los usuarios de un Active Directory local con Entra ID, facilitando la gestión de identidades y accesos en un entorno híbrido.", "Valor_Negocio": "Permite una gestión de identidades unificada, garantizando que los usuarios tengan acceso a los recursos tanto locales como en la nube.", "Usuarios_Objetivo": "Departamento de TI", "Soporte": "Gestionado como un proyecto.", "SLA_Estimado": "Se rige por el plan de proyecto.", "Alcance_Incluye": ["Configuración inicial de AD Connect", "Definición de reglas de sincronización"], "Alcance_No_Incluye": ["Auditoría de seguridad del Active Directory local"]}];
+const grid = document.getElementById('grid');
+const q = document.getElementById('q');
+const proc = document.getElementById('proc');
+const risk = document.getElementById('risk');
+const auto = document.getElementById('auto');
+const modal = document.getElementById('modal');
+
+// Poblar select de procesos
+const procesos = [...new Set(services.map(s=>s.Proceso_ITIL_Principal))];
+procesos.forEach(p=>{ const o=document.createElement('option'); o.value=p; o.textContent=p; proc.appendChild(o); });
+
+function update(){
+  const qq=q.value.toLowerCase();
+  const p=proc.value;
+  const r=risk.value;
+  const a=auto.value;
+  let list = services.filter(s=> ( !qq || JSON.stringify(s).toLowerCase().includes(qq) ));
+  if(p) list=list.filter(s=>s.Proceso_ITIL_Principal===p);
+  if(r) list=list.filter(s=>s.Nivel_Riesgo===r);
+  if(a) list=list.filter(s=>s.Automatizable===a);
+  grid.innerHTML='';
+  for(const s of list){
+    const art=document.createElement('article'); art.className='card';
+    art.innerHTML=`
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div style="display:flex;align-items:center">
+          <div class="icon">IT</div>
+          <div>
+            <h3 style="margin:0;font-size:16px">${s.Servicio}</h3>
+            <div class="small">${s.Proceso_ITIL_Principal} · ${s.Tipo_Solicitud}</div>
+          </div>
+        </div>
+        <div style="text-align:right">
+          <div class="badge">${s.Nivel_Riesgo}</div>
+          <div class="small" style="margin-top:6px">Frecuencia: ${s.Frecuencia_Uso_Estimada}</div>
+        </div>
+      </div>
+      <p class="small" style="margin-top:10px;color:#274a7a">${s.Descripcion}</p>
+      <div class="kv">
+        <div class="small">Automatizable</div><div>${s.Automatizable}</div>
+        <div class="small">Tipo de Solicitud</div><div>${s.Tipo_Solicitud}</div>
+        <div class="small">Dependencias</div><div>${s.Dependencias_Principales}</div>
+      </div>
+      <div style="margin-top:10px"><button class="input" onclick='openModal(${JSON.stringify({'Servicio':s.Servicio})})'>Ver detalles</button></div>
+    `;
+    grid.appendChild(art);
+  }
+}
+
+q.addEventListener('input', update); proc.addEventListener('change', update); risk.addEventListener('change', update); auto.addEventListener('change', update);
+document.getElementById('print').addEventListener('click', ()=>window.print());
+update();
+
+function openModal(s){
+  if(typeof s === 'string') s = JSON.parse(s);
+  modal.querySelector('#mtitle').textContent = s.Servicio;
+  const found = services.find(x=>x.Servicio===s.Servicio) || s;
+  modal.querySelector('#mbody').innerHTML = `
+    <div style="display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap">
+      <div style="flex:1">
+        <p><strong>Descripción:</strong> ${found.Descripcion}</p>
+        <p><strong>Valor para el Negocio:</strong> ${found.Valor_Negocio}</p>
+        <p><strong>Usuarios Objetivo:</strong> ${found.Usuarios_Objetivo}</p>
+        <p><strong>Soporte y Escalación:</strong> ${found.Soporte}</p>
+        <p><strong>Nivel de Servicio (SLA):</strong> ${found.SLA_Estimado}</p>
+        <p><strong>Proceso ITIL:</strong> ${found.Proceso_ITIL_Principal}</p>
+        <p><strong>Dependencias:</strong> ${found.Dependencias_Principales}</p>
+        <p><strong>Automatizable:</strong> ${found.Automatizable}</p>
+        
+        <h4>Qué Incluye</h4>
+        <ul>
+          ${found.Alcance_Incluye.map(item => `<li>${item}</li>`).join('')}
+        </ul>
+        
+        <h4>Qué No Incluye</h4>
+        <ul>
+          ${found.Alcance_No_Incluye.map(item => `<li>${item}</li>`).join('')}
+        </ul>
+      </div>
+      <div style="width:240px;flex-shrink:0"><img src="logo_tech.svg" style="width:100%;border-radius:8px"></div>
+    </div>
+  `;
+  modal.showModal();
+}
+</script>
+</body>
+</html>
