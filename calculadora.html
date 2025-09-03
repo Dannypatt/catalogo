@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Calculadora de Esfuerzo - Intune</title>
+  <style>
+    :root{--bg:#f6fbff;--card:#ffffff;--accent:#0b63d6;--muted:#567aa3;--border:#e6eefc}
+    body{font-family:Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);margin:0;color:#07345a}
+    .wrap{max-width:900px;margin:24px auto;padding:16px}
+    .header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .title{font-size:26px;font-weight:700}
+    .subtitle{color:var(--muted)}
+    .input,select,button{padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:#fff}
+    .btn{background:var(--accent);color:#fff;border:none;cursor:pointer;padding:8px 12px;border-radius:8px}
+    .card{background:var(--card);border:1px solid var(--border);padding:14px;border-radius:10px;box-shadow:0 1px 0 rgba(11,99,214,0.06); margin-top:18px;}
+    .service-list{list-style:none;padding:0;margin-top:12px;}
+    .service-list li{display:flex;align-items:center;justify-content:space-between;padding:10px;border-bottom:1px solid var(--border)}
+    .service-list li:last-child{border-bottom:none}
+    .service-list label{display:flex;align-items:center;gap:10px;cursor:pointer}
+    .fte-badge{font-weight:600;color:var(--muted);font-size:14px}
+    .results{background:#eef6ff;border:1px solid var(--border);border-radius:10px;padding:16px;margin-top:20px;display:flex;justify-content:space-around;text-align:center}
+    .results h3{margin:0 0 5px 0;font-size:16px;color:var(--muted)}
+    .results .value{font-size:28px;font-weight:700;color:var(--accent)}
+    footer{text-align:center;color:#6b85a8;margin:26px 0}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div>
+      <div class="title">Calculadora de Esfuerzo y Costos</div>
+      <div class="subtitle">Selecciona los servicios para estimar el esfuerzo (FTE) y el costo del proyecto.</div>
+    </div>
+    <div>
+      <a href="catalogo_servicios.html" class="btn">Volver al Catálogo</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Catálogo de Servicios</h3>
+    <ul id="service-list" class="service-list">
+      </ul>
+  </div>
+
+  <div class="card">
+      <h3>Parámetros de Costo</h3>
+      <label for="cost-fte" class="small">Costo por día de esfuerzo (FTE):</label>
+      <input type="number" id="cost-fte" class="input" value="500" style="margin-top:5px;width:100px;">
+  </div>
+
+  <div class="results">
+    <div>
+      <h3>Total Esfuerzo (FTE en días)</h3>
+      <div id="total-fte" class="value">0</div>
+    </div>
+    <div>
+      <h3>Costo Total Estimado</h3>
+      <div id="total-cost" class="value">$0</div>
+    </div>
+  </div>
+
+  <footer>Telefonica Tech Colombia</footer>
+</div>
+
+<script>
+// IMPORTANTE: Ajusta el valor de 'FTE' para cada servicio según tus métricas.
+// La unidad es "días-persona". Por ejemplo, 0.5 significa medio día.
+const servicesWithFTE = [
+  { "Servicio": "Reset de Password", "FTE": 0.5 },
+  { "Servicio": "Wall Paper", "FTE": 1 },
+  { "Servicio": "Windows Autopilot", "FTE": 5 },
+  { "Servicio": "Windows Update", "FTE": 4 },
+  { "Servicio": "MDM Android", "FTE": 3 },
+  { "Servicio": "MDM iPhone", "FTE": 3 },
+  { "Servicio": "Politicas de Cumplimiento", "FTE": 8 },
+  { "Servicio": "Block URL", "FTE": 2 },
+  { "Servicio": "Inicio de Página", "FTE": 1 },
+  { "Servicio": "BitLocker", "FTE": 4 },
+  { "Servicio": "Implementación Intune", "FTE": 20 },
+  { "Servicio": "Integración Entra ID", "FTE": 15 },
+  { "Servicio": "Integración Active Directory", "FTE": 10 }
+];
+
+const serviceList = document.getElementById('service-list');
+const totalFteEl = document.getElementById('total-fte');
+const totalCostEl = document.getElementById('total-cost');
+const costFteInput = document.getElementById('cost-fte');
+
+// Poblar la lista de servicios
+servicesWithFTE.forEach((service, index) => {
+  const li = document.createElement('li');
+  li.innerHTML = `
+    <label for="service-${index}">
+      <input type="checkbox" id="service-${index}" data-fte="${service.FTE}">
+      <span>${service.Servicio}</span>
+    </label>
+    <span class="fte-badge">${service.FTE} días</span>
+  `;
+  serviceList.appendChild(li);
+});
+
+function calculateTotal() {
+  let totalFTE = 0;
+  const checkboxes = serviceList.querySelectorAll('input[type="checkbox"]');
+  
+  checkboxes.forEach(cb => {
+    if (cb.checked) {
+      totalFTE += parseFloat(cb.dataset.fte);
+    }
+  });
+  
+  const costPerFTE = parseFloat(costFteInput.value) || 0;
+  const totalCost = totalFTE * costPerFTE;
+
+  totalFteEl.textContent = totalFTE.toFixed(1);
+  totalCostEl.textContent = `$${totalCost.toLocaleString('es-CO')}`;
+}
+
+// Escuchar eventos
+serviceList.addEventListener('change', calculateTotal);
+costFteInput.addEventListener('input', calculateTotal);
+
+// Cálculo inicial
+calculateTotal();
+</script>
+</body>
+</html>
